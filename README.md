@@ -8,6 +8,7 @@ Natural Language Processing: Adora utilizes state-of-the-art natural language pr
 Task Automation: Automate repetitive tasks such as scheduling meetings, sending emails, or retrieving information from databases with ease.
 Customizable Skills: Extend Adora's functionality by adding custom skills tailored to your specific needs using a simple plugin system.
 Voice Interaction: Interact with Adora hands-free using voice commands, making it convenient to use in various environments.
-Multi-platform Support: Access Adora on multiple platforms, including desktop, web, and mobile devices, ensuring seamless integration into your workflow.
+Multi-platform Support: Access Adora on multiple platforms, including desktop, web, and mobile devices, ensuring seamless integration into your workflow.![Screenshot 2024-03-20 173259](https://github.com/user-attachments/assets/bd6381c8-b20d-4738-8bb9-46264367d024)
+
 
 
