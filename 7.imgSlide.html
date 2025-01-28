@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Slideshow</title>
+    <style>
+        img {
+            width: 50%;
+            height: 70vh;
+            object-fit: cover;
+            transition: opacity 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <img id="img" src="/images/img.png" alt="Image Slider">
+    </div>
+    <button id="prev">Prev</button>
+    <button id="next">Next</button>
+
+    <script>
+        const images = [
+            "/images/img.png",
+            "/images/img1.png",
+            "/images/img2.png" 
+        ];
+
+        const img = document.getElementById("img");
+        let index = 0;
+
+        function showImg() {
+            img.style.opacity = 0; 
+            setTimeout(() => {
+                img.src = images[index];
+                img.style.opacity = 1; 
+            }, 500);  
+        }
+
+        function prevImage() {
+            index = (index === 0) ? images.length - 1 : index - 1; 
+            showImg();
+        }
+
+        function nextImage() {
+            index = (index === images.length - 1) ? 0 : index + 1; 
+            showImg();
+        }
+
+        document.getElementById("prev").addEventListener("click", prevImage);
+        document.getElementById("next").addEventListener("click", nextImage);
+    </script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRUD with IndexedDB</title>
+</head>
+<body>
+  <h1>CRUD Operations with IndexedDB</h1>
+
+  <!-- Form to Add Person -->
+  <form id="create-form">
+    <input type="text" id="name" placeholder="Enter name" required>
+    <input type="number" id="age" placeholder="Enter age" required>
+    <button type="submit">Add Person</button>
+  </form>
+
+  <!-- Container to display data -->
+  <ul id="data-list"></ul>
+
+  <script>
+    // Open IndexedDB
+    let db;
+    const dbName = "peopleDB";
+    const storeName = "peopleStore";
+
+    const request = indexedDB.open(dbName, 1);
+
+    request.onupgradeneeded = function(e) {
+      db = e.target.result;
+      const objectStore = db.createObjectStore(storeName, { keyPath: "id", autoIncrement: true });
+      objectStore.createIndex("nameIndex", "name", { unique: false });
+    };
+
+    request.onerror = function(e) {
+      console.error("Error opening database:", e.target.error);
+    };
+
+    request.onsuccess = function(e) {
+      db = e.target.result;
+      console.log("Database opened successfully");
+      renderPeople(); // Render people when the database is ready
+    };
+
+    // Add a person to the database (Create Operation)
+    document.getElementById("create-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+      const name = document.getElementById("name").value;
+      const age = document.getElementById("age").value;
+
+      const transaction = db.transaction([storeName], "readwrite");
+      const objectStore = transaction.objectStore(storeName);
+
+      const person = { name: name, age: age };
+
+      const request = objectStore.add(person);
+
+      request.onsuccess = function() {
+        console.log("Person added to the store", person);
+        renderPeople(); // Re-render after adding person
+      };
+
+      request.onerror = function(e) {
+        console.error("Error adding person:", e.target.error);
+      };
+    });
+
+    // Render people from IndexedDB (Read Operation)
+    function renderPeople() {
+      const transaction = db.transaction([storeName], "readonly");
+      const objectStore = transaction.objectStore(storeName);
+
+      const request = objectStore.getAll(); // Get all records
+
+      request.onsuccess = function(e) {
+        const people = e.target.result;
+        const list = document.getElementById("data-list");
+        list.innerHTML = ''; // Clear the list
+
+        people.forEach(person => {
+          const listItem = document.createElement("li");
+          listItem.innerHTML = `${person.name}, Age: ${person.age}
+            <button class="edit-btn" data-id="${person.id}">Edit</button>
+            <button class="delete-btn" data-id="${person.id}">Delete</button>`;
+          list.appendChild(listItem);
+        });
+
+        // Attach edit and delete event listeners
+        attachEditDeleteListeners();
+      };
+
+      request.onerror = function(e) {
+        console.error("Error reading from database:", e.target.error);
+      };
+    }
+
+    // Edit Operation (Update)
+    function editPerson(id) {
+      const newName = prompt("Enter new name:");
+      const newAge = prompt("Enter new age:");
+
+      const transaction = db.transaction([storeName], "readwrite");
+      const objectStore = transaction.objectStore(storeName);
+
+      const request = objectStore.get(id);
+
+      request.onsuccess = function(e) {
+        const person = e.target.result;
+        person.name = newName;
+        person.age = newAge;
+
+        const updateRequest = objectStore.put(person);
+        updateRequest.onsuccess = function() {
+          console.log("Person updated:", person);
+          renderPeople(); // Re-render after update
+        };
+        updateRequest.onerror = function(e) {
+          console.error("Error updating person:", e.target.error);
+        };
+      };
+
+      request.onerror = function(e) {
+        console.error("Error fetching person for update:", e.target.error);
+      };
+    }
+
+    // Delete Operation
+    function deletePerson(id) {
+      const transaction = db.transaction([storeName], "readwrite");
+      const objectStore = transaction.objectStore(storeName);
+
+      const request = objectStore.delete(id);
+
+      request.onsuccess = function() {
+        console.log("Person deleted");
+        renderPeople(); // Re-render after deletion
+      };
+
+      request.onerror = function(e) {
+        console.error("Error deleting person:", e.target.error);
+      };
+    }
+
+    // Attach event listeners for edit and delete buttons
+    function attachEditDeleteListeners() {
+      document.querySelectorAll(".edit-btn").forEach(button => {
+        button.addEventListener("click", function() {
+          const id = parseInt(this.dataset.id);
+          editPerson(id);
+        });
+      });
+
+      document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", function() {
+          const id = parseInt(this.dataset.id);
+          deletePerson(id);
+        });
+      });
+    }
+
+  </script>
+</body>
+</html>

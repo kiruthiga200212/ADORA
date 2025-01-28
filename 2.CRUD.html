@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRUD with LocalStorage</title>
+</head>
+<body>
+  <h1>CRUD Operations with LocalStorage</h1>
+
+  <!-- Form to Add Person -->
+  <form id="create-form">
+    <input type="text" id="name" placeholder="Enter name" required>
+    <input type="number" id="age" placeholder="Enter age" required>
+    <button type="submit">Add Person</button>
+  </form>
+
+  <ul id="data-list"></ul>
+
+  <script>
+    // Create Operation - Add new person
+    document.getElementById("create-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const age = document.getElementById("age").value;
+
+      // Create a person object
+      const person = {
+        id: Date.now(), // Unique ID based on timestamp
+        name: name,
+        age: age
+      };
+
+      // Get existing data from localStorage or initialize empty array if none exists
+      let people = JSON.parse(localStorage.getItem('people')) || [];
+
+      // Add the new person to the array
+      people.push(person);
+
+      // Save the updated people list back to localStorage
+      localStorage.setItem('people', JSON.stringify(people));
+
+      // Clear the form
+      document.getElementById("create-form").reset();
+
+    
+      renderPeople();
+    });
+
+    function renderPeople() {
+      const people = JSON.parse(localStorage.getItem('people')) || [];
+      const list = document.getElementById('data-list');
+      list.innerHTML = ''; // Clear the list first
+
+      people.forEach(person => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `${person.name}, Age: ${person.age} <button class="delete-btn" data-id="${person.id}">Delete</button> <button class="edit-btn" data-id="${person.id}">Edit</button>`;
+        list.appendChild(listItem);
+      });
+
+      document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const id = parseInt(this.dataset.id);
+          deletePerson(id);
+        });
+      });
+
+      document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const id = parseInt(this.dataset.id);
+          editPerson(id);
+        });
+      });
+    }
+
+    // Delete Operation - Remove person from localStorage
+    function deletePerson(id) {
+      let people = JSON.parse(localStorage.getItem('people')) || [];
+      people = people.filter(person => person.id !== id);
+      localStorage.setItem('people', JSON.stringify(people));
+      renderPeople();
+    }
+
+    // Edit Operation - Modify person's data
+    function editPerson(id) {
+      let people = JSON.parse(localStorage.getItem('people')) || [];
+      const person = people.find(p => p.id === id);
+
+      if (person) {
+        document.getElementById("name").value = person.name;
+        document.getElementById("age").value = person.age;
+
+        // Remove the person from the list before re-editing
+        people = people.filter(p => p.id !== id);
+        localStorage.setItem('people', JSON.stringify(people));
+      }
+
+      renderPeople();
+    }
+
+    // Initially render the list of people from localStorage
+    renderPeople();
+  </script>
+</body>
+</html>

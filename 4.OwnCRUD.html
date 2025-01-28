@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="form-emp" method="post">
+        <input type="text" class="name" id="name" placeholder="Enter Employee name"/>
+        <input type ="text" class="position" id="position" placeholder="Enter your position">
+        <input type="submit" value="submit" id="submit">
+    </form>
+    <ul id="displayData"></ul>
+    <script>
+        var formEmp = document.getElementById("form-emp")
+        
+        var displayData = document.getElementById("displayData")
+        var submit = document.getElementById("submit")
+submit.addEventListener("click",function(event){
+    event.preventDefault()
+    var empName = document.getElementById("name").value
+        var position = document.getElementById("position").value
+    let item = {
+            id:Date.now(),
+            name :empName,
+            position:position
+
+        }
+
+        let person = JSON.parse(localStorage.getItem("item")) || []
+        person.push(item)
+        localStorage.setItem("item",JSON.stringify(person))
+        displayEmployeeData();
+
+})
+       
+
+        function displayEmployeeData (){
+            let person = JSON.parse(localStorage.getItem("item")) || []
+            displayData.innerHTML= ""
+             person.forEach(item => {
+                let itemList = document.createElement("li")
+                itemList.innerHTML = `${item.name} ${item.position}
+                <input type="submit" value="DELETE"/    >`
+                displayData.appendChild(itemList)
+                let deleteBtn = document.createElement("button");
+ deleteBtn.textContent ="delete"
+            });
+ 
+ itemList.appendChild(deleteBtn)
+ deleteItem(item.id)
+            
+        }
+
+        function deleteItem(id){
+            let person = JSON.parse(localStorage.getItem("item")) || []
+            person = person.filter(item => item.id !== id);
+            localStorage.setItem("person",JSON.stringify(person));
+            displayEmployeeData();
+        }
+displayEmployeeData();
+    </script>
+</body>
+</html>
