@@ -402,6 +402,9 @@ def Task_Execution():
             Speak("i am fine mam")
             Speak("whats about you")
 
+        elif 'I am fine' in query:
+            Speak("I am glad to hear. what can i help you")
+
         elif 'you need a break' in query:
             Speak("Ok ma'am," "You can call me anytime")
             break
@@ -418,7 +421,7 @@ def Task_Execution():
             
         elif 'stupid' in query:
             Speak("sorry if am worng")
-            break
+            
 
         elif 'am give up' in query:
             Speak("no you can...Fight for it boss")
@@ -667,12 +670,12 @@ def Task_Execution():
                     rememberMsg = query.replace("remember that", "")
                     rememberMsg = rememberMsg.replace("adora", "")
                     Speak(f"You tell me to remind you that: "+rememberMsg)
-                    remember = open('C:/Users/keert/OneDrive/Desktop/FINAL-PROJECT/VIRTUAL-ASSISTANT-ADORA--ADORA-MODELS/books/Data.txt', 'w')
+                    remember = open('./books/Data.txt', 'w')
                     remember.write(rememberMsg)
                     remember.close()
 
         elif 'what do you remember' in query:
-                    remember = open('C:/Users/keert/OneDrive/Desktop/FINAL-PROJECT/VIRTUAL-ASSISTANT-ADORA--ADORA-MODELS/books/Data.txt', 'r')
+                    remember = open('./books/Data.txt', 'r')
                     Speak("You tell me that:" +remember.read())
 
         elif 'google scrap' in query:
